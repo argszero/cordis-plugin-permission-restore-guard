@@ -1,0 +1,48 @@
+# The @argszero/cordis-plugin-permission-restore-guard bundle patch: mount and go.
+#
+# One report (#9154) describes a session that cannot be opened at all. It was
+# switched to the Auto review preset while that integration was live; the
+# integration is no longer registered; and now every attempt to open it fails:
+#
+#   permission: cannot restore preset "auto" without its active integration
+#
+# The asymmetry is one line against one line, in
+# packages/interaction/permission-presets/src/index.ts:
+#
+#   apply()                 (line 405)  if (name === AUTO_PRESET) this.autoAdmit?.()
+#   pinInitialPermission()  (line 432)  if (this.autoAdmit === undefined) throw ...
+#
+# An optional call on the write side, a throw on the read side. The throw is
+# the worse half: it runs inside that service's own `session/created` listener,
+# and `dsh-session` lets a synchronous `session/created` failure veto
+# publication ("a throwing `session/created` listener rolls the attach back",
+# packages/core/session/src/index.ts). So the session is not published with a
+# warning — it is rolled back, the client is told `api-session/removed`, the row
+# leaves the sidebar, and the log on disk stays complete and unopenable.
+#
+# The durable record is what makes this fixable from outside core. A session's
+# permission identity is one appended `permission/preset` event, and the
+# `permissions` projection folds the last one. So recording a different
+# identity IS the repair — no log rewriting, no header surgery, and the session
+# keeps every event it ever had.
+#
+# This patch mounts the guard that does it:
+#
+#   - a listener PREPENDED to `session/created`, so it runs inside the same
+#     publication boundary ahead of the service's own listener and the refusal
+#     never fires. Prepending is load-bearing: `announce()` resolves its
+#     listener snapshot up front and calls listeners in registration order, so
+#     a listener registered after the service's would run after it had thrown.
+#   - the replacement identity keeps the session's knobs: a configured preset
+#     whose sandbox mode and approval policy already equal the session's, or —
+#     when none matches — the name the picker itself will report.
+#   - `permission_restore`, a tool that lists the sessions already in this
+#     state and records the identity for them on request.
+#
+# It writes no knob and changes no permission. A session it repairs keeps the
+# sandbox mode and approval policy it had; only the recorded identity — the
+# name — changes.
+
+- insert:
+    - id: permission-restore-guard
+      name: '@argszero/cordis-plugin-permission-restore-guard'

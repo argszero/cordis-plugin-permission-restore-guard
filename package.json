@@ -1,0 +1,87 @@
+{
+  "name": "@argszero/cordis-plugin-permission-restore-guard",
+  "description": "Makes a session openable again when its recorded permission preset can no longer be restored. `dsh-permission-presets` writes and restores the same identity on two different terms: switching a session to the Auto preset runs `this.autoAdmit?.()` and silently succeeds with no integration registered, while restoring that session throws 'cannot restore preset \"auto\" without its active integration'. Because the throw happens inside the service's own `session/created` listener, and `dsh-session`'s announce() lets a throwing listener veto publication, the session is disposed, the client is told api-session/removed and the row leaves the sidebar — with its log intact and no way in the product to open it again. This plugin records a restorable identity first, from a listener prepended to `session/created`, so the refusal never fires: one `permission/preset` event naming a configured preset with the same knobs, or the identity the picker itself will report. It writes no knob, so no session's sandbox mode or approval policy changes. A tool reports and repairs sessions already in that state.",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/types/**/*.d.ts",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/argszero/cordis-plugin-permission-restore-guard.git"
+  },
+  "homepage": "https://github.com/argszero/cordis-plugin-permission-restore-guard#readme",
+  "bugs": {
+    "url": "https://github.com/argszero/cordis-plugin-permission-restore-guard/issues"
+  },
+  "keywords": [
+    "cordis",
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "permission",
+    "permission-preset",
+    "auto-review",
+    "session",
+    "session-created",
+    "recovery",
+    "diagnostics",
+    "tool"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@deepseek-ai/dsh-permission-presets": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0",
+    "@deepseek-ai/dsh-session": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0",
+    "@deepseek-ai/dsh-session-projection": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0",
+    "@deepseek-ai/dsh-tools": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.4",
+    "@deepseek-ai/dsh-permission-presets": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-sandbox-policy": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-scope": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-session": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-session-projection": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-shell": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-system-prompt": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-tools": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-user-approval": "^0.2.0-rc.2",
+    "@types/node": "^24.19.1",
+    "semver": "^7.8.5",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "pretest": "tsc",
+    "test": "node --test \"test/*.spec.mjs\"",
+    "test:inject": "node scripts/inject-defects.mjs",
+    "test:probe-lines": "node scripts/probe-lines.mjs",
+    "prepublishOnly": "tsc"
+  },
+  "engines": {
+    "node": "^22.19 || >=24"
+  }
+}
