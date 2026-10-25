@@ -37,7 +37,7 @@ const manifest = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'))
  * without running that is how a wrong range gets published, so the list is the
  * contract and the manifest has to agree with it — not the other way round.
  */
-const SUPPORTED_LINES = ['0.1.7-alpha.1', '0.1.7-rc.2', '0.2.0-rc.2']
+const SUPPORTED_LINES = ['0.1.7-alpha.1', '0.1.7-rc.2', '0.2.0-rc.2', '0.2.1-rc.3']
 
 /** Every file under `dir` whose name ends with one of `extensions`. */
 function walk(dir, extensions, found = []) {
@@ -168,7 +168,7 @@ test('the README quotes the range it is describing, in full', () => {
     assert.ok(readme.includes(range.replace(/\|/g, '\\|')) || readme.includes(range),
       `the README must quote the peer range ${range} verbatim (pipes escaped inside a table)`)
   }
-  for (const line of ['0.1.7-alpha.1', '0.1.7-rc.2', '0.2.0-rc.2']) {
+  for (const line of ['0.1.7-alpha.1', '0.1.7-rc.2', '0.2.0-rc.2', '0.2.1-rc.3']) {
     assert.ok(readme.includes(line), `the README must name the ${line} line it was verified against`)
   }
 })

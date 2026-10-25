@@ -1,7 +1,7 @@
 {
   "name": "@argszero/cordis-plugin-permission-restore-guard",
   "description": "Makes a session openable again when its recorded permission preset can no longer be restored. `dsh-permission-presets` writes and restores the same identity on two different terms: switching a session to the Auto preset runs `this.autoAdmit?.()` and silently succeeds with no integration registered, while restoring that session throws 'cannot restore preset \"auto\" without its active integration'. Because the throw happens inside the service's own `session/created` listener, and `dsh-session`'s announce() lets a throwing listener veto publication, the session is disposed, the client is told api-session/removed and the row leaves the sidebar — with its log intact and no way in the product to open it again. This plugin records a restorable identity first, from a listener prepended to `session/created`, so the refusal never fires: one `permission/preset` event naming a configured preset with the same knobs, or the identity the picker itself will report. It writes no knob, so no session's sandbox mode or approval policy changes. A tool reports and repairs sessions already in that state.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publishConfig": {
     "access": "public"
   },
@@ -53,22 +53,22 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
-    "@deepseek-ai/dsh-permission-presets": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0",
-    "@deepseek-ai/dsh-session": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0",
-    "@deepseek-ai/dsh-session-projection": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0",
-    "@deepseek-ai/dsh-tools": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0"
+    "@deepseek-ai/dsh-permission-presets": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0 || >=0.2.1-rc.1 <0.2.1",
+    "@deepseek-ai/dsh-session": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0 || >=0.2.1-rc.1 <0.2.1",
+    "@deepseek-ai/dsh-session-projection": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0 || >=0.2.1-rc.1 <0.2.1",
+    "@deepseek-ai/dsh-tools": ">=0.1.7-alpha.1 <0.2.0 || >=0.2.0-rc.1 <0.2.0 || >=0.2.1-rc.1 <0.2.1"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "^4.0.4",
-    "@deepseek-ai/dsh-permission-presets": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-sandbox-policy": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-scope": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-session": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-session-projection": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-shell": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-system-prompt": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-tools": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-user-approval": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-permission-presets": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-sandbox-policy": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-scope": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-session": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-session-projection": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-shell": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-system-prompt": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-user-approval": "0.2.1-rc.3",
     "@types/node": "^24.19.1",
     "semver": "^7.8.5",
     "typescript": "^5.9.3"
